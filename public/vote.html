@@ -1,0 +1,17 @@
+<form>
+    <select name="listeDeParties" ng-model="repeatSelect">
+        <option ng-repeat="partie in parties" value="{{partie}}">{{partie}}</option>
+    </select>
+    <button ng-click='vote(repeatSelect)'>Vote!</button>
+</form>
+<div id="post-stream">
+    <h4>Results Feed</h4>
+    <table>
+        <tr ng-repeat="partie in parties">
+            <td>{{ partie }}</td>
+            <td>{{ results[parties.indexOf(partie)] }}</td>
+        </tr>
+    </table>
+
+
+</div>

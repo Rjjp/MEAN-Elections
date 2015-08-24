@@ -1,0 +1,68 @@
+
+Hola
+
+Search: <input ng-model="query"><br>
+{{query}}
+
+
+
+
+{{parties}} t <br>
+<br>
+Your name:
+<input type="text" ng-model="username">
+<button ng-click='sayHello()'>greet</button>
+<hr>
+{{greeting}}
+
+<script>
+    var parties = [
+        {party: "PP", votes: 563292},
+        {party: "PSOE", votes:  249152},
+        {party: "AhoraMadrid", votes:  519210},
+        {party: "C's", votes:  186059}
+    ];
+
+    var mandates = 57;
+    options = {
+        voteAccessor: function(object) {return object.votes},
+        resultProperty: "concejales"
+    }
+
+    var results = dhondt(parties, mandates, options);
+
+    console.dir('results:'+results);
+    console.log(JSON.stringify(results));
+</script>
+<!--
+<script>
+
+    console.log(4);
+
+    var votes = [100000, 80000, 30000, 20000];
+    var mandates = 8;
+    console.log(4);
+    var results = dhondt.compute(votes, mandates);
+    console.log(4);
+    console.log(results);
+    window.alert(results);
+    // [ 4, 3, 1, 0 ]
+
+    var parties = [
+        {party: "A", votes: 100},
+        {party: "B", votes:  60},
+        {party: "C", votes:  45}
+    ];
+    var mandates = 2;
+    options = {
+        voteAccessor: function(object) {return object.votes},
+        resultProperty: "mandates",
+        base: 1.42
+    }
+    var results = dhondt.compute(parties, mandates, options);
+    console.log(results);
+    // [ { party: 'A', votes: 100, mandates: 2 },
+    //   { party: 'B', votes: 60, mandates: 0 },
+    //   { party: 'C', votes: 45, mandates: 0 } ]
+</script>
+--!>
