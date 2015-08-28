@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
+var mongoose = require( 'mongoose' );
+var Vote = mongoose.model('Vote');
+
 //Used for routes that must be authenticated.
 function isAuthenticated (req, res, next) {
     // if user is authenticated in the session, call the next() to call the next request handler
@@ -21,38 +24,107 @@ function isAuthenticated (req, res, next) {
 };
 
 //Register the authentication middleware
-router.use('/posts', isAuthenticated);
+router.use('/votes', isAuthenticated);
 
 //api for all posts
-router.route('/posts')
+router.route('/votes')
 
     //create a new post
     .post(function(req, res){
 
         //TODO create a new post in the database
-        res.send({message:"TODO create a new post in the database"});
+        var vote = new Vote();
+        vote.vote_for = req.body.vote_for;
+        vote.last_elections = req.body.last_elections;
+        vote.created_by = req.body.created_by;
+        vote.save(function(err, vote) {
+            if (err) {
+                return res.send(500, err);
+            }
+            return res.json(vote);
+        });
     })
 
     .get(function(req, res){
 
-        //TODO get all the posts in the database
-        res.send({message:"TODO get all the posts in the database"});
+       Vote.find(function(err, votes){
+           if (err){
+               return res(500, err);
+           }
+           return res.send(votes);
+       });
+    });
+
+//api for count Votes
+router.route('/countVotes')
+
+    .get(function(req, res) {
+
+        Vote.aggregate(
+            [{$group: {_id: "$vote_for", total: {$sum: 1}}},
+                { $sort: { total: -1 } }],
+
+            function (err, vote) {
+                if (err)
+                    res.send(err);
+                res.json(vote);
+            })
     })
 
+        //create a new post
+        .post(function(req, res){
+
+            //TODO create a new post in the database
+            var vote = new Vote();
+            vote.vote_for = req.body.vote_for;
+            vote.last_elections = req.body.last_elections;
+            vote.created_by = req.body.created_by;
+            vote.save(function(err, vote) {
+                if (err) {
+                    return res.send(500, err);
+                }
+                return res.json(vote);
+            });
+        });
+
+
 //api for a specfic post
-router.route('/posts/:id')
+router.route('/votes/:id')
 
     //create
     .put(function(req,res){
-        return res.send({message:'TODO modify an existing post by using param ' + req.param.id});
+        Vote.findOne({ _id: id }, function(err, vote){
+            if(err)
+                res.send(err);
+
+            post.created_by = req.body.created_by;
+            post.vote_for = req.body.vote_for;
+
+            post.save(function(err, vote){
+                if(err)
+                    res.send(err);
+
+                res.json(vote);
+            });
+        });
     })
 
     .get(function(req,res){
-        return res.send({message:'TODO get an existing post by using param ' + req.param.id});
+        Vote.findById(req.params.id, function(err, vote){
+            if(err)
+                res.send(err);
+            res.json(vote);
+        });
     })
 
     .delete(function(req,res){
-        return res.send({message:'TODO delete an existing post by using param ' + req.param.id})
+        Vote.remove({
+            _id: req.params.id
+        }, function(err) {
+            if (err)
+                res.send(err);
+            res.json("deleted :(");
+        });
     });
 
 module.exports = router;

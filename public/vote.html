@@ -1,15 +1,21 @@
-<form>
-    <select name="listeDeParties" ng-model="repeatSelect">
-        <option ng-repeat="partie in parties" value="{{partie}}">{{partie}}</option>
-    </select>
-    <button ng-click='vote(repeatSelect)'>Vote!</button>
-</form>
-<div id="post-stream">
+
+<div class="clearfix">
+    <form ng-Submit="vote()" ng-show="authenticated">
+        <h4>{{current_user}} votes</h4>
+        <select name="listeDeParties" ng-model="newVote.vote_for">
+            <option ng-repeat="partie in parties" value="{{partie}}">{{partie}}</option>
+        </select>
+        <button lass="btn submit-btn pull-right" type="submit">Vote!</button>
+    </form>
+</div>
+
+
+<div id="post-stream" ng-show="authenticated">
     <h4>Results Feed</h4>
     <table>
-        <tr ng-repeat="partie in parties">
-            <td>{{ partie }}</td>
-            <td>{{ results[parties.indexOf(partie)] }}</td>
+        <tr ng-repeat="vote in votes">
+            <td>{{ vote._id }}</td>
+            <td>{{ vote.total }}</td>
         </tr>
     </table>
 

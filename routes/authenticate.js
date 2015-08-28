@@ -1,6 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
+var mongoose = require('mongoose');
+var User = mongoose.model('User');
+var LocalStrategy   = require('passport-local').Strategy;
+var bCrypt = require('bcrypt-nodejs');
+//temporary data store
+var users = {};
+
 module.exports = function(passport){
 
     //sends successful login state back to angular
@@ -13,6 +20,11 @@ module.exports = function(passport){
         res.send({state: 'failure', user: null, message: "Invalid username or password"});
     });
 
+    //sends failure login state back to angular
+    router.get('/failureRegister', function(req, res){
+        res.send({state: 'failure', user: null, message: "User already exists"});
+    });
+
     //log in
     router.post('/login', passport.authenticate('login', {
         successRedirect: '/auth/success',
@@ -20,9 +32,9 @@ module.exports = function(passport){
     }));
 
     //sign up
-    router.post('/signup', passport.authenticate('signup', {
+    router.post('/register', passport.authenticate('register', {
         successRedirect: '/auth/success',
-        failureRedirect: '/auth/failure'
+        failureRedirect: '/auth/failureRegister'
     }));
 
     //log out

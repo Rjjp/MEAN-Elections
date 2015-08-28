@@ -9,7 +9,8 @@ var userSchema = new mongoose.Schema({
 var voteSchema = new mongoose.Schema({
     created_by: String,
     created_at: {type: Date, default: Date.now},
-    vote_for: String
+    vote_for: String,
+    last_elections: String
 });
 
 mongoose.model('Vote', voteSchema);
